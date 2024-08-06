@@ -40,3 +40,15 @@ describe("./bands endpoint", () => {
     expect(Array.isArray(responseData)).toBe(true);
   });
 });
+
+describe("Express Musicians endpoint", () => {
+  it("returns 200 status code", async () => {
+    const response = await request(app).get("/musicians/:id");
+    expect(response.statusCode).toBe(200);
+  });
+  it("returns an object of Musician", async () => {
+    const response = await request(app).get("/musicians/:id");
+    const responseData = JSON.parse(response.text);
+    expect(typeof response).toBe("object");
+  });
+});
