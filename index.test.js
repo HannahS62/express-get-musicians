@@ -52,3 +52,48 @@ describe("Express Musicians endpoint", () => {
     expect(typeof response).toBe("object");
   });
 });
+
+describe("POST Express Validation", () => {
+  it("returns 201 when correct data is passed", async () => {
+    const response = await request(app)
+      .post("/musicians")
+      .set("Content-Type", "application/json")
+      .send({
+        name: "Ed Sheeran",
+        instrument: "Guitar",
+      });
+    expect(response.statusCode).toBe(201);
+  });
+  it("returns an error is name is missing", async () => {
+    const response = await request(app)
+      .post("/musicians")
+      .set("Content-type", "application/json")
+      .send({
+        instrument: "Guitar",
+      });
+    expect(response.statusCode).toBe(400);
+    expect(response.body.error).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          path: "name",
+        }),
+      ])
+    );
+  });
+  it("returns an error is name is instrument", async () => {
+    const response = await request(app)
+      .post("/musicians")
+      .set("Content-type", "application/json")
+      .send({
+        name: "Ed Sheeran",
+      });
+    expect(response.statusCode).toBe(400);
+    expect(response.body.error).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          path: "instrument",
+        }),
+      ])
+    );
+  });
+});

@@ -2,6 +2,8 @@ const { Router } = require("express");
 const Musician = require("../models/Musician");
 const musiciansRouter = Router();
 
+const { check, validationResult } = require("express-validator");
+
 //FIND
 musiciansRouter.get("/", async (req, res) => {
   const musicians = await Musician.findAll();
@@ -12,23 +14,24 @@ musiciansRouter.get("/:id", async (req, res) => {
   const musician = await Musician.findByPk(req.params.id);
   res.json(musician);
 });
-// CREATE
-musiciansRouter.post("/", async (req, res) => {
-  if (!req.body.name) {
-    res.status(400).json({ error: "Missing musician name" });
-    return;
-  }
-  if (!req.body.instrument) {
-    res.status(400).json({ error: "Missing musician instrument" });
-    return;
-  }
 
-  const musician = await Musician.create({
-    name: req.body.name,
-    instrument: req.body.instrument,
-  });
-  res.status(201).json(musician);
-});
+// CREATE
+musiciansRouter.post(
+  "/",
+  [check(["name", "instrument"]).notEmpty().trim()],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ error: errors.array() });
+    } else {
+      const musician = await Musician.create({
+        name: req.body.name,
+        instrument: req.body.instrument,
+      });
+      res.status(201).json(musician);
+    }
+  }
+);
 
 //UPDATE
 

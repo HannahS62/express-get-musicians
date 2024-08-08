@@ -3,7 +3,9 @@ const app = express();
 const { Musician, Band } = require("../models/index");
 const { db } = require("../db/connection");
 const musiciansRouter = require("../routes/musicians.js");
+const bandRouter = require("../routes/bands.js");
 app.use("/musicians", musiciansRouter);
+app.use("/bands", bandRouter);
 
 const port = 3000;
 app.use(express.json());
